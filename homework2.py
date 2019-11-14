@@ -120,13 +120,13 @@ def main():
     # Simulation box volume !! Can be changed in dmpci !!
     V_sim = 15*15*15
     # Number of PEG polymer in the simulation volume
-    N_p = np.linspace(1, 10, 2)
+    N_p = np.linspace(1, 100, 100)
     np.random.seed(279)
-    seeds = np.random.randint(-9999,-1000,size=1)
+    seeds = np.random.randint(-9999,-1000,size=10)
     print(seeds)
     for i in range(N_p.shape[0]):
         for seed in seeds:
-            # Polymer density
+            # Polymer & water density
             frac_p = "%.4f" % round(N_p[i]/(density * V_sim), 4)
             frac_w = "%.4f" % round(1 - (N_p[i]/(density * V_sim)), 4)
             change_input('dmpci.pcs', frac_p, frac_w, seed)
