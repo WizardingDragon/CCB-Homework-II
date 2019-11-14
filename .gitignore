@@ -1,0 +1,16 @@
+# Folders:
+.ipynb_checkpoints/*
+
+# File Types:
+*.vtk
+*.dat
+*.zip
+
+# Files:
+dmpcis.*
+dmpcls.*
+dmpcrs.*
+dmpchs.*
+.directory
+.dmpci.*
+Notes
