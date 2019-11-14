@@ -1,4 +1,4 @@
-# CCB-HomeworkII
+# CCB-Homework-II
 Homework II of Computational Cell Biology
 
 Crowding simulation of a polymer solution - Measure a polymer’s end-end length fluctuations in a dilute and concentrated solution. (NB R<sub>ee</sub> = √<R<sub>ee</sub><sup>2</sup>> here) and this is the value that is in the dmpchs and dmpcas files.
