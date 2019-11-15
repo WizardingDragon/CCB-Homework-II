@@ -120,22 +120,22 @@ def main():
     # Simulation box volume !! Can be changed in dmpci !!
     V_sim = 15*15*15
     # Number of PEG polymer in the simulation volume
-    N_p = np.linspace(1, 100, 100)
+    N_p = np.logspace(1, 2, 11)
     np.random.seed(279)
-    seeds = np.random.randint(-9999,-1000,size=10)
+    seeds = np.random.randint(-9999,-1000,size=1)
     print(seeds)
     for i in range(N_p.shape[0]):
         for seed in seeds:
             # Polymer & water density
-            frac_p = "%.4f" % round(N_p[i]/(density * V_sim), 4)
-            frac_w = "%.4f" % round(1 - (N_p[i]/(density * V_sim)), 4)
+            frac_p = "%.4f" % round(N_p[i].astype('int16')/(density * V_sim), 4)
+            frac_w = "%.4f" % round(1 - (N_p[i].astype('int16')/(density * V_sim)), 4)
             change_input('dmpci.pcs', frac_p, frac_w, seed)
 
             # Starts simulation
             os.system(str('./dpd-linux pcs_sim'))
 
             #Get EE length
-            get_lengths('dmpcas.pcs_sim','PEG', 2000, means, stds)
+            get_lengths('dmpcas.pcs_sim','PEG', 3000, means, stds)
 
             # Writes data to file
             with open('results.log', 'a') as f:

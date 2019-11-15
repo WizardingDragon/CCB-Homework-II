@@ -20,16 +20,16 @@ Bond	B B	128 0.5
 
 BondPair  B B B  5.0  0.0
 
-Polymer Water 0.99901 "  (W)  "
-Polymer PEG 0.00099 "  (B (28 B) B)  "
+Polymer	Water	0.9999	"	(W)	"
+Polymer	PEG	0.0001	"	(B	(28	B)	B)	"
 
 Box			15 15 15			1 1 1
 Density		3
 Temp		1
-RNGSeed		-60112
+RNGSeed     -8349
 Lambda		0.5
 Step		0.02
-Time		2000
+Time		6000
 SamplePeriod		100
 AnalysisPeriod		1000
 DensityPeriod		1000
