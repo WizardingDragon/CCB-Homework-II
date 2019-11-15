@@ -18,13 +18,13 @@ Bead	B
 
 Bond	B B	128 0.5
 
-Polymer Water 0.99901 "  (W)  "
-Polymer PEG 0.00099 "  (B (8 B) B)  "
+Polymer	Water	0.9945	"	(W)	"
+Polymer	PEG	0.0055	"	(B	(8	B)	B)	"
 
 Box			15 15 15			1 1 1
 Density		3
 Temp		1
-RNGSeed		-60112
+RNGSeed     -8349
 Lambda		0.5
 Step		0.02
 Time		3000
