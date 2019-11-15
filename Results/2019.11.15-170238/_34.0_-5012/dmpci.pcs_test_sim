@@ -1,0 +1,40 @@
+dpd
+
+Title	" Water/polymer solution "
+Date	2/7/01
+Comment	" Simulation of polymer crowding in water solution "
+
+State   random
+
+Bead	W
+    	0.5
+    	25	
+    	4.5	
+
+Bead	B
+    	0.5
+    	25	25
+    	4.5	4.5	
+
+Bond	B B	128 0.5
+
+Polymer	Water	0.9966	"	(W)	"
+Polymer	PEG	0.0034	"	(B	(8	B)	B)	"
+
+Box			15 15 15			1 1 1
+Density		3
+Temp		1
+RNGSeed     -5012
+Lambda		0.5
+Step		0.02
+Time		3000
+SamplePeriod		100
+AnalysisPeriod		1000
+DensityPeriod		1000
+DisplayPeriod		100
+RestartPeriod		1000
+Grid		1 1 1
+
+Command	ToggleBeadDisplay             1    W
+Command SetCurrentStateCamera         1    0.5 -1.0 -0.5  0.5 0.5 0.5
+Command SetCurrentStateDefaultFormat  1    Paraview
