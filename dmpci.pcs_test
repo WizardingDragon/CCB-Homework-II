@@ -28,9 +28,9 @@ RNGSeed		-60112
 Lambda		0.5
 Step		0.02
 Time		3000
-SamplePeriod		100
+SamplePeriod		10
 AnalysisPeriod		1000
-DensityPeriod		1000
+DensityPeriod		3000
 DisplayPeriod		100
 RestartPeriod		1000
 Grid		1 1 1
