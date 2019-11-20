@@ -135,7 +135,7 @@ def main():
             os.system(str('./dpd-linux pcs_test_sim'))
 
             #Get EE length
-            get_lengths('dmpcas.pcs_test_sim','PEG', 3000, means, stds)
+            get_lengths('dmpcas.pcs_test_sim','PEG', 30000, means, stds)
 
             # Writes data to file
             with open('results.log', 'a') as f:
