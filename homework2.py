@@ -120,7 +120,7 @@ def main():
     # Simulation box volume !! Can be changed in dmpci !!
     V_sim = 15*15*15
     # Number of PEG polymer in the simulation volume
-    N_p = np.linspace(1, 100, 100)
+    N_p = np.linspace(1, 60, 60)
     np.random.seed(279)
     seeds = np.random.randint(-9999,-1000,size=10)
     print(seeds)
@@ -135,7 +135,7 @@ def main():
             os.system(str('./dpd-linux pcs_sim'))
 
             #Get EE length
-            get_lengths('dmpcas.pcs_sim','PEG', 3000, means, stds)
+            get_lengths('dmpcas.pcs_sim','PEG', 30000, means, stds)
 
             # Writes data to file
             with open('results.log', 'a') as f:

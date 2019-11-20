@@ -120,7 +120,7 @@ def main():
     # Simulation box volume !! Can be changed in dmpci !!
     V_sim = 15*15*15
     # Number of PEG polymer in the simulation volume
-    N_p = np.linspace(1, 100, 10)
+    N_p = np.linspace(1, 60, 6)
     np.random.seed(279)
     seeds = np.random.randint(-9999,-1000,size=15)
     print(seeds)
