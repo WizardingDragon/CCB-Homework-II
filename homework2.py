@@ -1,110 +1,126 @@
 import os
-import sys
+import platform
+import shutil
 import subprocess
-import numpy as np
+import sys
 import time
+
+import numpy as np
+
 
 def clean_cwd(*args):
     """Removes most of the simulation files from the current directory"""
 
     # Generator of the files generated for each runs
     mv_files = (file for file in os.listdir() if file.endswith('.vtk')
-                 or file.endswith('.dat')
-                 or file.startswith('eeldata')
-                 or file.startswith('dmpcis.')
-                 or file.startswith('dmpcls.')
-                 or file.startswith('dmpchs.')
-                 or file.startswith('dmpcas.')
-                 or file.endswith('_sim'))
-    # If no argument were given to name the folder, we will default to date and time to name the folder and archive the simulation files.
-    if args is None:
-        folder_loc = time.strftime("%Y.%m.%d-%H%M%S")
-    else:
-        folder_loc = ''
-        for arg in args:
-            folder_loc = '{}_{}'.format(folder_loc, arg)
+                or file.endswith('.dat')
+                or file.startswith('eeldata')
+                or file.startswith('dmpcis.')
+                or file.startswith('dmpcls.')
+                or file.startswith('dmpchs.')
+                or file.startswith('dmpcas.')
+                or file.endswith('_sim'))
 
-    os.system('mkdir ' + folder_loc)
+    # If no argument were given to name the folder, we will default to date and time to name the folder and archive the simulation files.
+    folder_loc = '_'.join(list(map(str, args))) if args is not None else time.strftime("%Y.%m.%d-%H%M%S")
+    os.makedirs(folder_loc, exist_ok=True)
+
     for file in mv_files:
         try:
-            os.system('mv {} {}/{}'.format(file, folder_loc, file))
-            #print("\rMoved {:s} succesfully!".format(file), end=' '*15)
+            shutil.move(file, os.path.join(folder_loc, file))
         except:
-            print("\rFailed to move {:s}".format(file))
+            print(f"Failed to move {file}")
             raise
         
     print('')
 
+
 def archive_results(seeds):
-    """ Moves all the resulting folders in a single one, in the "results" folder, by name. """
+    """ Moves all the resulting folders in a single one, in the 'results' folder, by name. """
+
     # Moves all created folder and result files in a single folder
-    datetime =time.strftime("%Y.%m.%d-%H%M%S")
+    datetime = time.strftime("%Y.%m.%d-%H%M%S")
     try:
-        os.system(str('mkdir Results/'+str(datetime)))
+        os.makedirs(f"Results/{datetime}")
     except:
-        print("\rFailed to create folder Results/{:s}".format(datetime))
+        print("Failed to create folder Results/{:s}".format(datetime))
+        raise
+
     try:
-        os.system('mv results.log Results/{:}/results.log'.format(datetime))
+        shutil.move('results.log', f"Results/{datetime:s}/results.log")        
     except:
-        print("\rFailed to move results.log")
+        print("Failed to move results.log")
+
     for seed in seeds:
         mv_folders = (folder for folder in os.listdir() if folder.endswith(str(seed)))
         for folder in mv_folders:
             try:
-                os.system('mv {} Results/{}/{}'.format(folder, datetime, folder))
-                #print("\rMoved {:s} succesfully!".format(file), end=' '*15)
+                shutil.move(folder, f"Results/{datetime}/{folder}")
             except:
-                print("\rFailed to move {:s}".format(folder))
+                print(f"Failed to move {folder}")
                 raise
 
-def change_input(filename, frac_p, frac_w, seed=None):
+
+def change_input(filename, frac_p, seed=None, time=3000):
     """Creates a new dmpci.pcs_sim with updated number fraction values (cf dpd doc)"""
-    
+
+    frac_p = round(frac_p, 5)
+    frac_w = 1 - frac_p
+
+    params = {'Box': "20 20 20\t1 1 1", 'RNGSeed': seed if seed is not None else -4073, 'Step': 0.04, 'Time': time, 
+              'SamplePeriod': 100, 'AnalysisPeriod': time //30, 'DensityPeriod': time, 'DisplayPeriod': time //10, 'RestartPeriod': time,
+              }
+
     with open(filename, 'rt') as rf:
         with open(filename+'_sim', 'wt') as wf:
 
             for line in rf:
+
+                if line.startswith('Polymer Water'):
+                    line = line.strip().split()
+                    line[2] = f"{frac_w:.5f}"
+                    
+                    # Converts list to list[str]
+                    line = list(map(str, line))
+                    wf.write('\t'.join(line) + '\n')  
+                    line = next(rf) 
+
                 if line.startswith('Polymer PEG'):
                     line = line.strip().split()
-                    line[2] = frac_p
+                    line[2] = f"{frac_p:.5f}"
+
                     # Converts list to list[str]
-                    line = list(map(lambda x: str(x), line))
+                    line = list(map(str, line))
                     wf.write('\t'.join(line) + '\n')
-                    
-                    # Gets next line
                     line = next(rf)
-                    wf.write('\n')
-
-                elif line.startswith('Polymer Water'):
-                    c_line = line
-                    c_line = c_line.strip().split()
-                    c_line[2] = frac_w
                     
-                    # Converts list to list[str]
-                    c_line = list(map(lambda x: str(x), c_line))
+                if line.strip().split() and line.strip().split()[0] in params.keys():
+                    key = line.strip().split()[0]
+                    wf.write(f"{key:<12}\t{str(params[key])}\n")
 
-                    wf.write('\t'.join(c_line)+'\n')
-
-                elif line.startswith('RNGSeed') and seed:
-                    wf.write('{:<12}{:<}\n'.format('RNGSeed',seed))
                 else:
                     wf.write(line)
                     
+
 def get_lengths(filename, polymer, time, means, stds):
     """Parses 'as' file to get the EE length mean and std, time allows to return the correct ee lengths based on dmpci analysis time"""
-    time_toggle = 0
+
+    time_toggle = False
     with open(filename, 'rt') as f:
         for line in f:
-            if line.startswith('Time = {}'.format(time)):
-                time_toggle = 1
-            if (line.startswith('{} EE distance'.format(polymer)) and time_toggle == 1):
+            if line.startswith(f"Time = {time}"):
+                time_toggle = True
+
+            if line.startswith(f"{polymer} EE distance") and time_toggle:
                 line = next(f)
-                means.append(float(line.split()[0]))
-                stds.append(float(line.split()[1]))
+                means.append(float(line.strip().split()[0]))
+                stds.append(float(line.strip().split()[1]))
                 break
+
         else:
-            raise EOFError('No {} EE distance found'.format(polymer))
+            raise EOFError(f"No {polymer} EE distance found")
         
+
 def main():
 
     # Creates a file to store the simulation values
@@ -116,38 +132,38 @@ def main():
     # density, defined in dmpci
     density = 3
     # Water beads volume !! Does not change !!
-    V_w = 4 * (0.5)**3
+    V_w = 4 * 0.5 **3
     # Simulation box volume !! Can be changed in dmpci !!
-    V_sim = 15*15*15
+    V_sim = 20 **3
     # Number of PEG polymer in the simulation volume
-    N_p = np.linspace(1, 60, 60)
+    N_p = np.linspace(10, 60, 58)
     np.random.seed(279)
-    seeds = np.random.randint(-9999,-1000,size=10)
-    print(seeds)
+    seeds = np.random.randint(-9999, -1000, size=1)
+
     for i in range(N_p.shape[0]):
         for seed in seeds:
             # Polymer & water density
-            frac_p = "%.4f" % round(N_p[i]/(density * V_sim), 4)
-            frac_w = "%.4f" % round(1 - (N_p[i]/(density * V_sim)), 4)
-            change_input('dmpci.pcs', frac_p, frac_w, seed)
+            
+            frac_p = N_p[i]/(density * V_sim)
+            change_input('dmpci.pcs', frac_p, seed)
 
             # Starts simulation
-            os.system(str('./dpd-linux pcs_sim'))
+            os.system('dpd-w10.exe pcs_sim') if platform.system().lower() == 'windows' else os.system('./dpd-linux pcs_sim')
 
             #Get EE length
-            get_lengths('dmpcas.pcs_sim','PEG', 30000, means, stds)
+            get_lengths('dmpcas.pcs_sim', 'PEG', 3000, means, stds)
 
             # Writes data to file
             with open('results.log', 'a') as f:
-                f.write("{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:s}\n".format(N_p[i], means[-1], stds[-1], seed, frac_p))
+                f.write(f"{N_p[i]:.4f}\t{means[-1]:.4f}\t{stds[-1]:.4f}\t{seed:.4f}\t{frac_p:.4f}\n")
+
             print(N_p[i], means[-1], stds[-1])
-            
+             
             # Archive simulation files
             clean_cwd(N_p[i], seed)
+
     # Archive the simulation folders
     archive_results(seeds)
-            
-        
 
 
 if __name__ == "__main__":

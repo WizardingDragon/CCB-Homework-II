@@ -23,18 +23,18 @@ BondPair  B B B  5.0  0.0
 Polymer Water 0.99901 "  (W)  "
 Polymer PEG 0.00099 "  (B (28 B) B)  "
 
-Box			15 15 15			1 1 1
+Box			20 20 20			1 1 1
 Density		3
 Temp		1
 RNGSeed		-60112
 Lambda		0.5
-Step		0.02
+Step		0.04
 Time		30000
 SamplePeriod		100
 AnalysisPeriod		1000
-DensityPeriod		3000
-DisplayPeriod		100
-RestartPeriod		1000
+DensityPeriod		30000
+DisplayPeriod		10000
+RestartPeriod		30000
 Grid		1 1 1
 
 Command	ToggleBeadDisplay             1    W
