@@ -151,7 +151,7 @@ def main():
             os.system('dpd-w10.exe pcs_sim') if platform.system().lower() == 'windows' else os.system('./dpd-linux pcs_sim')
 
             #Get EE length
-            get_lengths('dmpcas.pcs_sim', 'PEG', 3000, means, stds)
+            get_lengths('dmpcas.pcs_sim', 'PEG', 30000, means, stds)
 
             # Writes data to file
             with open('results.log', 'a') as f:
