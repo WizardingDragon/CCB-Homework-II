@@ -6,7 +6,7 @@ Comment	" Simulation of polymer crowding in water solution "
 
 State   random
 
-Bead	W
+Bead	W	
     	0.5
     	25	
     	4.5	
@@ -18,7 +18,7 @@ Bead	B
 
 Bond	B B	128 0.5
 
-BondPair  B B B  5.0  0.0
+BondPair  B B B  1.0  0.0
 
 Polymer Water 0.99901 "  (W)  "
 Polymer PEG 0.00099 "  (B (28 B) B)  "
@@ -28,7 +28,7 @@ Density		3
 Temp		1
 RNGSeed		-60112
 Lambda		0.5
-Step		0.04
+Step		0.02
 Time		30000
 SamplePeriod		100
 AnalysisPeriod		1000
