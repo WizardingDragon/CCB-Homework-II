@@ -1,0 +1,39 @@
+Number of polymers created		8753
+Number of beads created			10116
+Number of bonds created			1363
+Number of bond pairs created	0
+  # of type 0  8706
+  # of type 1  47
+
+Bead type 0
+  Radius: 0.5
+  Cons Int: 25 25 
+  Diss Int: 4.5 4.5 
+
+Bead type 1
+  Radius: 0.5
+  Cons Int: 25 25 
+  Diss Int: 4.5 4.5 
+
+Bond type 0
+  Spring Const/Unstr length 128 0.5
+
+
+Polymer type 0
+  with fraction          0.9946      
+  containing beads       1
+  and bonds              0
+  Bead types
+  0 
+
+Polymer type 1
+  with fraction          0.0054      
+  containing beads       30
+  and bonds              29
+  Bead types
+  1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1 
+  Bond types
+  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0 
+  Stiff bond types
+
+
